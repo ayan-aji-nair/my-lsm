@@ -33,12 +33,11 @@ namespace mylsm {
   private:
     // this order is the order of defn!!!!
     DBConfig cfg_;
+    SequenceNumber next_seq_ = 1;
 
     std::unique_ptr<WalWriter> wal_writer_;
-    std::unique_ptr<WalReader> wal_reader_;
     std::unique_ptr<MemTable> active_;
     std::unique_ptr<MemTable> imm_;
 
-    SequenceNumber next_seq_ = 1;
   }; 
 }

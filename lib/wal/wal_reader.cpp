@@ -8,10 +8,8 @@ namespace mylsm {
     // create path_ and file_ objects
     path_ = std::filesystem::path(path);
     file_.open(path_, std::ios::binary);
-
-    if (!file_.good())
-      throw std::runtime_error("Failed to open WAL file at " + path_.string());
-    
+    //if (!file_.exists())
+    //  throw std::runtime_error("Failed to open WAL file at " + path_.string());
   }
 
   WalReader::~WalReader() {
