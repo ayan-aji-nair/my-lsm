@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <string>
+#include <iostream>
 
 #include "db.h"
 
@@ -17,6 +18,7 @@ class DBTest : public ::testing::Test {
       tmp = fs::temp_directory_path() / ("mylsm_db_" + std::to_string(::getpid()) + "_" + std::to_string(::testing::UnitTest::GetInstance()->random_seed()));
       fs::remove_all(tmp);
       fs::create_directories(tmp);
+      std::cout << tmp << "\n";
     }
 
     void TearDown() override {

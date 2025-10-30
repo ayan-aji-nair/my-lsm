@@ -13,18 +13,20 @@ namespace mylsm {
       WalReader reader(read_path);
 
       SequenceNumber max_seq = 0;
-      for (const WriteOp& op : reader.ReadAll()) {
-        switch(op.type) {
+      while (auto op = reader.ReadOne()) {
+        switch(op->type) {
           case ValueType::kPut: {
-            Status s = active_->Put(op.key, op.value);
+            Status s = active_->Put(op->key, op->value);
             break;
           }
           case ValueType::kDelete: {
-            Status s = active_->Erase(op.key);
+            Status s = active_->Erase(op->key);
             break;
           }
+          default: 
+            continue;
         }
-        max_seq = std::max(max_seq, op.seq);
+        max_seq = std::max(max_seq, op->seq);
       }
 
       next_seq_ = max_seq + 1;

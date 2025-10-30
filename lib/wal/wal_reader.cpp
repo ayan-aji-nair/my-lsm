@@ -33,28 +33,28 @@ namespace mylsm {
     return n == 0 || static_cast<bool>(file.read(out.data(), n));
   }
 
-  std::optional<WriteOp> WalReader::readOne(std::ifstream& file) {
+  std::optional<WriteOp> WalReader::ReadOne() {
     WriteOp op;
 
-    auto seq = readValue<SequenceNumber>(file);
+    auto seq = readValue<SequenceNumber>(this->file_);
     if (!seq) return std::nullopt;
     op.seq = *seq;
 
-    auto typeb = readValue<uint8_t>(file);
+    auto typeb = readValue<uint8_t>(this->file_);
     if (!typeb) return std::nullopt;
     op.type = static_cast<ValueType>(*typeb);
 
 
-    auto keyLen = readValue<uint32_t>(file);
+    auto keyLen = readValue<uint32_t>(this->file_);
     if (!keyLen) return std::nullopt;
     // reject super duper large keys and values
     if (*keyLen > (1u<<20)) return std::nullopt;
-    if (!readBytes(file, op.key, *keyLen)) return std::nullopt;
+    if (!readBytes(this->file_, op.key, *keyLen)) return std::nullopt;
 
-    auto valLen = readValue<uint32_t>(file);
+    auto valLen = readValue<uint32_t>(this->file_);
     if (!valLen) return std::nullopt;
     if (*valLen > (1u<<20)) return std::nullopt;
-    if (!readBytes(file, op.value, *valLen)) return std::nullopt;
+    if (!readBytes(this->file_, op.value, *valLen)) return std::nullopt;
 
     return op;
   }
@@ -62,7 +62,7 @@ namespace mylsm {
   std::vector<WriteOp> WalReader::ReadAll() {
     std::vector<WriteOp> ops;
     while (true) {
-      auto op = readOne(file_);
+      auto op = ReadOne();
       if (!op.has_value()) break;
       // transfer the struct to the vector (after getting the value from the optional)
       ops.push_back(std::move(*op));

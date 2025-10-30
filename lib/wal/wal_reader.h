@@ -17,6 +17,7 @@ namespace mylsm {
     ~WalReader();
 
     [[nodiscard]] std::vector<WriteOp> ReadAll();
+    [[nodiscard]] std::optional<WriteOp> ReadOne();
 
   private:
     // actual file
@@ -25,6 +26,5 @@ namespace mylsm {
     std::filesystem::path path_;
 
     template <typename T> std::optional<T> readValue(std::ifstream& file);
-    std::optional<WriteOp> readOne(std::ifstream& file);
   };
 }
